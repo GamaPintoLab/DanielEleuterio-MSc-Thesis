@@ -1,0 +1,19 @@
+# Mapping of reads obtained from nanopore sequencing of a sample of flow-sorted chromosomes from the GM03417 cell line, with each chromosome of the human genome assembly GRCh38.p13, using the minimap2 [1] tool with the following settings:
+
+minimap2 -x map-ont -t 20 GRCh38.p13_genomic.fna flow_sorted_chrs_GM03417_pass.fq > aln_all_flow_sorted_chrs_GM03417.paf
+
+# Counting of the number of reads that aligned to each chromosome and sorting from highest to lowest count number:
+
+sort -k1,1 -u aln_all_flow_sorted_chrs_GM03417.paf | awk -F '\t' '{print $6}' | sort | uniq -c | sort -nr > flow_sorted_aln_minimap2_hg38_pass_count.txt
+
+# Replacement of the GenBank accession with the chromosome number:
+
+awk 'NR==FNR{a[$2]=$1;next}{$2=a[$2]}1' chr_names_final.txt flow_sorted_aln_minimap2_hg38_pass_count.txt > flow_sorted_aln_minimap2_hg38_pass_count_corr.txt
+
+# The bar plot was created using the following R script:
+
+flow_sorted_aln_GM03417_bar_plot.R
+
+# References:
+
+1. Li, H. (2018). Minimap2: pairwise alignment for nucleotide sequences. Bioinformatics, 34(18), 3094–3100. https://doi.org/10.1093/bioinformatics/bty191
